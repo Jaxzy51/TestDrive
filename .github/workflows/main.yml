@@ -19,22 +19,16 @@ jobs:
         with:
           node-version: '18'
 
-      - run: npm install
+      - name: Install all dependencies
+        run: npm run install
 
-      - name: Install client and server dependencies
-        run: |
-          cd client
-          npm install
-          cd ../server
-          npm install
+      - name: Install wait-on
+        run: npm install -g wait-on
 
-      - name: Start dev servers in background
+      - name: Start dev servers and wait for backend
         run: |
-          cd client
-          npm run dev &
-          cd ../server
-          npm run start &
-          sleep 10
+          npm run develop &
+          wait-on http://localhost:3001
 
       - name: Run Cypress tests
         run: npm run cypress:run
@@ -48,6 +42,7 @@ jobs:
     steps:
       - name: Deploy to Render
         run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
 
 
 
